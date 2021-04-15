@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MyFriends</string>
+    <string name="myfriends">MyFriends</string>
+    <string name="edit_friend">Edit Friend</string>
+    <string name="hint1">hint</string>
+    <string name="hint">hint</string>
+    <string name="delete">Delete</string>
+    <string name="back">Save</string>
+    <string name="favourite">Favourite</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="phone">Phone</string>
+    <string name="name">Name</string>
+    <string name="todo">TODO</string>
+    <string name="address" />
+    <string name="title_activity_maps">Map</string>
+</resources>
