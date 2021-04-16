@@ -1,7 +1,6 @@
 package com.example.myfriends
 
 import android.Manifest
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -15,8 +14,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import kotlinx.android.synthetic.main.activity_camera.*
 import java.io.File
-import java.io.Serializable
-import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -43,7 +40,6 @@ class CameraActivity : AppCompatActivity() {
         camera_capture_button.setOnClickListener{takePhoto()}
 
         outputDirectory = getOutputDirectory()
-
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
@@ -76,7 +72,6 @@ class CameraActivity : AppCompatActivity() {
                     savePictureAndClose(newPicture)
                 }
             })
-
     }
 
     private fun savePictureAndClose(newPicture: File) {
@@ -104,7 +99,6 @@ class CameraActivity : AppCompatActivity() {
                 .build()
 
 
-
             // Select back camera as a default
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
@@ -122,7 +116,6 @@ class CameraActivity : AppCompatActivity() {
 
         }, ContextCompat.getMainExecutor(this))
     }
-
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
@@ -161,5 +154,4 @@ class CameraActivity : AppCompatActivity() {
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
-
 }
