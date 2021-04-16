@@ -10,18 +10,19 @@ import android.util.Log
 import com.example.myfriends.model.BEFriend
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.Exception
 
 class FriendDao_Impl(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION), IFriendDao {
     private val TAG: String = "xyz" 
 
     companion object {
-        private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "Friend"
+        private const val DATABASE_VERSION = 1
+        private const val DATABASE_NAME = "Friend"
     }
 
     override fun onCreate(db: SQLiteDatabase?) { //Creates the Friend table on runtime with the relevant table columns
-        db?.execSQL("CREATE TABLE $DATABASE_NAME (id INTEGER PRIMARY KEY, name TEXT, address TEXT, locationLat DOUBLE, locationLon DOUBLE, phone TEXT, mail TEXT, website TEXT, birthday TEXT, isFavourite BIT, picture String)")
+        db?.execSQL("CREATE TABLE $DATABASE_NAME (id INTEGER PRIMARY KEY, name TEXT, address TEXT, locationLat DOUBLE, locationLon DOUBLE, phone TEXT, mail TEXT UNIQUE, website TEXT, birthday TEXT, isFavourite BIT, picture String )")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) { //drops the Friend table in case the Db version is updated
