@@ -6,7 +6,7 @@ interface IFriendDao {
 
     fun getAll(): List<BEFriend>
 
-    fun getById(id: Int): List<BEFriend>
+    fun getById(id: Int): BEFriend
 
     fun insert(f: BEFriend)
 

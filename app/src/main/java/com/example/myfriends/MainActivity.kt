@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_CODE = 1
     private val TAG = "xyz"
 
-    //var friendsLst: Array<BEFriend> = Friends().getAll()
+
     lateinit var myRepo: IFriendDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,9 +32,9 @@ class MainActivity : AppCompatActivity() {
         myRepo = FriendDao_Impl(this)
         insertTestData()
         //setAdapterForListView(myRepo.getAll())
-
+        var friendsLst: List<BEFriend> = myRepo.getAll()
         lst_friends.adapter = FriendAdapter(this, myRepo.getAll().toTypedArray())
-        lst_friends.setOnItemClickListener { parent, view, position, id -> onListItemClick(parent as ListView, view, position, id as Int) }
+        lst_friends.setOnItemClickListener { parent, view, position, id -> onListItemClick(parent as ListView, view, position, id) }
         //floatingActionButton.setOnClickListener{v -> onClickAdd()}
     }
 
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun onClickInsert() {
-        myRepo.insert(BEFriend(0, field_name.text.toString(), " ", 0.0, 0.0, " ", " ", " ", " ", true, null))
+       // myRepo.insert(BEFriend(0, field_name.text.toString(), " ", 0.0, 0.0, " ", " ", " ", " ", true, null))
         //setAdapterForListView(myRepo.getAll())
     }
 
@@ -93,10 +93,10 @@ class MainActivity : AppCompatActivity() {
     }
 */
 
-    fun onListItemClick(parent: ListView?, v: View?, position: Int, id: Int) {
+    fun onListItemClick(parent: ListView?, v: View?, position: Int, id: Long) {
         // position is in the list!
         // first get the name of the person clicked
-        val friendForDetails = myRepo.getById(id) as Serializable
+        val friendForDetails = myRepo.getById(id.toInt()) as Serializable
         val intent = Intent(this, DetailsActivity::class.java)
         intent.putExtra("friendForDetails", friendForDetails)
         intent.putExtra("positionOfFriend", position)
