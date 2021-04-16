@@ -45,7 +45,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
+        //Marker for both friend address and current location
         googleMap?.addMarker(
             MarkerOptions()
                 .position(friendLocation)

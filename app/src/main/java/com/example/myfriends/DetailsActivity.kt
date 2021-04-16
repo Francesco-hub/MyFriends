@@ -31,18 +31,18 @@ class DetailsActivity : AppCompatActivity() {
     private val RESULT_UPDATE = 3
     private val RESULT_DELETE = 4
 
-    private lateinit var friendToEdit: BEFriend
-    private var isCreation: Boolean = false
-    private var locationChanged: Boolean = false
-    private var currentLocationLat: Double = 0.0
+    private lateinit var friendToEdit: BEFriend //The friend we are editing, received as an extra from MainActivity
+    private var isCreation: Boolean = false //Used for checking if we are creating or updating a friend as the behaviour of the DetailsActivity changes depending on the functionality
+    private var locationChanged: Boolean = false //Used for determining if the location has been changed
+    private var currentLocationLat: Double = 0.0 //New variables for Current Location
     private var currentLocationLon: Double = 0.0
-    private var myLocationListener: LocationListener? = null
+    private var myLocationListener: LocationListener? = null //Initialize the Location Listener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_details)
 
-        btn_camera.setOnClickListener { v -> openCamera() }
+        btn_camera.setOnClickListener { v -> openCamera() } //Assign the method each of the buttons will call on click
         btn_call.setOnClickListener { v -> onClickCall() }
         btn_sms.setOnClickListener { v -> onClickSms() }
         btn_mail.setOnClickListener { v -> onClickEmail() }
@@ -50,15 +50,17 @@ class DetailsActivity : AppCompatActivity() {
         btn_home.setOnClickListener { v -> onClickHome() }
         btn_map.setOnClickListener { v -> onClickMap() }
 
-        var extras: Bundle = intent.extras!!
+        var extras: Bundle = intent.extras!! // We get the extras sent from the previous activity
         isCreation = extras.getBoolean("isCreation")
         startListening()
         startListening()
-        if (!isCreation) {
+        if (!isCreation) { //Depending if we are creating a friend or not, we adapt the GUI.
             friendToEdit = extras.getSerializable("friendForDetails") as BEFriend
             if (friendToEdit.picture != null) {
                 friendPicture.setImageDrawable(Drawable.createFromPath(friendToEdit.picture?.absolutePath))
             }
+            else friendPicture.setImageResource(R.drawable.user_image)
+            //Set the information in the Fields to the information of the previous friend
             sw_Favourite.isChecked = friendToEdit.isFavorite
             field_name.setText(friendToEdit.name)
             field_phone.setText(friendToEdit.phone)
@@ -69,6 +71,7 @@ class DetailsActivity : AppCompatActivity() {
             btn_delete.setOnClickListener { v -> onClickDelete() }
             btn_save.setOnClickListener { v -> onClickSave() }
         } else {
+            //Set the fields and button functionality to be ready for friend creation
             friendToEdit = BEFriend(1, "", "", 0.0, 0.0, "", "", "", "", false, null)
             textView.text = "Add Friend"
             btn_delete.text = "Cancel"
@@ -79,7 +82,7 @@ class DetailsActivity : AppCompatActivity() {
         Toast.makeText(this, "id = ${friendToEdit.id}", Toast.LENGTH_LONG).show()
     }
 
-    private fun onClickMap() {
+    private fun onClickMap() { //Method that will start the MapsActivity showing the address of our friend
         val intent = Intent(this, MapsActivity::class.java)
         intent.putExtra("friendName", friendToEdit.name)
         intent.putExtra("homeLocationLat", friendToEdit.locationLat)
@@ -89,14 +92,14 @@ class DetailsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun onClickBrowse() {
-        var url = friendToEdit.website
+    private fun onClickBrowse() { //Method that will start the default browser and visit the webpage of our friend
+        var url = "http://" +friendToEdit.website
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         startActivity(intent)
     }
 
-    private fun onClickEmail() {
+    private fun onClickEmail() { //Method that will star the default Mail activity and create a new e-mail with the address of our friend
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "plain/text"
         val receivers = arrayOf(friendToEdit.mail)
@@ -105,12 +108,12 @@ class DetailsActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun openCamera() {
+    private fun openCamera() { //Method that will open the camera activity and await for a picture file to be returned by it
         val intent = Intent(this, CameraActivity::class.java)
         startActivityForResult(intent, REQUEST_CODE)
     }
 
-    private fun onClickCreate() {
+    private fun onClickCreate() { //Method that will create a new friend and send it back to main activity
         val intent = Intent()
         if (validateInput()) {
             friendToEdit.name = field_name.text.toString()
@@ -126,13 +129,13 @@ class DetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun onClickCancel() {
+    private fun onClickCancel() { //Method called when clicking cancel, will set the result to cancel so that MainActivity receives it
         val intent = Intent()
         setResult(RESULT_CANCELED, intent)
         finish()
     }
 
-    private fun onClickSave() {
+    private fun onClickSave() { //Method called when updating a friend. It will send to MainActivity the updated Friend for it to be updated in Db
         val intent = Intent()
         if (validateInput()) {
             friendToEdit.name = field_name.text.toString()
@@ -148,42 +151,55 @@ class DetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun validateInput(): Boolean {
-        if (!field_name.text.isNullOrBlank() && !field_phone.text.isNullOrBlank()) return true
+    private fun validateInput(): Boolean { //Method that will verify that all information is correct before allowing the user to Create/Update friends
+        if (!field_name.text.isNullOrBlank() && !field_phone.text.isNullOrBlank()&& !field_address.text.isNullOrBlank()&& !field_birthday.text.isNullOrBlank()&& !field_mail.text.isNullOrBlank()&& !field_web.text.isNullOrBlank()) return true
         showMissingInfo()
         return false
     }
 
-    private fun showMissingInfo() {
+    private fun showMissingInfo() { //Method that will display the missing info if needed
         if (field_name.text.isNullOrBlank()) {
             field_name.error = "Please enter a valid Name"
         } else field_name.error = null
         if (field_phone.text.isNullOrBlank()) {
             field_phone.error = "Please enter a valid Number"
         } else field_phone.error = null
+        if (field_address.text.isNullOrBlank()) {
+            field_address.error = "Please enter a valid Address"
+        } else field_address.error = null
+        if (field_birthday.text.isNullOrBlank()) {
+            field_birthday.error = "Please enter a valid Birthday"
+        } else field_birthday.error = null
+        if (field_mail.text.isNullOrBlank()) {
+            field_mail.error = "Please enter a valid E-mail"
+        } else field_mail.error = null
+        if (field_web.text.isNullOrBlank()) {
+            field_web.error = "Please enter a valid Website"
+        } else field_web.error = null
+
     }
 
-    private fun onClickDelete() {
+    private fun onClickDelete() { //Method that will send to MainActivity the RESULT_DELETE, Which will perform the deletion in Db
         val intent = Intent()
         intent.putExtra("idOfFriend", friendToEdit.id)
         setResult(RESULT_DELETE, intent)
         finish()
     }
 
-    fun onClickCall() {
+    fun onClickCall() { //Method that will open the default app for calling with the number of our friend
         val intent = Intent(Intent.ACTION_DIAL)
         intent.data = Uri.parse("tel: ${friendToEdit.phone}")
         startActivity(intent)
     }
 
-    private fun onClickSms() {
+    private fun onClickSms() { //Method that will open the default app for sending a SMS with the number of our friend
         val sendIntent = Intent(Intent.ACTION_VIEW)
         sendIntent.data = Uri.parse("sms: ${friendToEdit.phone}")
         sendIntent.putExtra("sms_body", "Hi, this is an sms")
         startActivity(sendIntent)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { //Method that will check that the CameraActivity will return a picture and assign it to our friend as well as display it in our DetailsActivity
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -199,7 +215,7 @@ class DetailsActivity : AppCompatActivity() {
     private val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION)
 
-    private fun requestPermissions() {
+    private fun requestPermissions() { //Method that will request persmission for using the GPS when needed
         if (!isPermissionGiven()) {
             Log.d(TAG, "Permission to use GPS denied")
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -207,7 +223,7 @@ class DetailsActivity : AppCompatActivity() {
         } else Log.d(TAG, "Permission to use GPS granted")
     }
 
-    private fun isPermissionGiven(): Boolean {
+    private fun isPermissionGiven(): Boolean { //Method that will ensure that the permission has been given to use the GPS
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return permissions.all { p -> checkSelfPermission(p) == PackageManager.PERMISSION_GRANTED }
         }
@@ -215,7 +231,8 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    fun onClickGetLocation(view: View) {
+    //When the application was finished we realized that this method was not used but we did not manage to get the set current location functionality to work correctly so we decided to let it here commented for further development
+   /* fun onClickGetLocation(view: View) {
         if (!isPermissionGiven()) {
             Toast.makeText(this, "No permission given", Toast.LENGTH_SHORT).show()
             return
@@ -227,16 +244,16 @@ class DetailsActivity : AppCompatActivity() {
         if (location != null)
             Toast.makeText(this, "Location = ${location.latitude}, ${location.longitude}", Toast.LENGTH_SHORT).show()
         else Toast.makeText(this, "Location is null", Toast.LENGTH_SHORT).show()
-    }
+    }*/
 
-    fun onClickHome() {
+    fun onClickHome() { //Method that will set the Friend address to the current location
         requestPermissions()
         locationChanged = true
         startListening()
     }
 
     @SuppressLint("MissingPermission")
-    private fun startListening() {
+    private fun startListening() { //Method that will listen and set the location
         if (!isPermissionGiven()) return
         if (myLocationListener == null)
             myLocationListener = object : LocationListener {
@@ -245,7 +262,6 @@ class DetailsActivity : AppCompatActivity() {
                     if (locationChanged) {
                         friendToEdit.locationLat = location.latitude
                         friendToEdit.locationLon = location.longitude
-                        Log.d(TAG, "hola")
                     } else {
                         currentLocationLat = location.latitude
                         currentLocationLon = location.longitude
@@ -265,7 +281,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     @SuppressLint("MissingPermission")
-    private fun stopListening() {
+    private fun stopListening() { //Method that will ensure that our listener stops listening
         if (myLocationListener == null) return
 
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager

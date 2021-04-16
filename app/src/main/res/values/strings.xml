@@ -10,8 +10,7 @@
     <string name="add_friend">Add Friend</string>
     <string name="phone">Phone</string>
     <string name="name">Name</string>
-    <string name="todo">TODO</string>
-    <string name="address" />
+    <string name="address">Address </string>
     <string name="title_activity_maps">Map</string>
     <string name="birthday">Birthday</string>
     <string name="mail">Mail</string>
