@@ -1,29 +1,27 @@
 package com.example.myfriends
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
 import com.example.myfriends.Data.FriendDao_Impl
 import com.example.myfriends.Data.IFriendDao
 import com.example.myfriends.model.BEFriend
-import com.example.myfriends.model.Friends
-import kotlinx.android.synthetic.main.activity_details.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.Serializable
 
 class MainActivity : AppCompatActivity() {
     private val REQUEST_CODE = 1
-    private val TAG = "xyz"
+    private val RESULT_CREATE = 2
+    private val RESULT_UPDATE = 3
+    private val RESULT_DELETE = 4
 
-
-    lateinit var myRepo: IFriendDao
+    private lateinit var myRepo: IFriendDao
+    private lateinit var updatedList: List<BEFriend>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,37 +29,16 @@ class MainActivity : AppCompatActivity() {
 
         myRepo = FriendDao_Impl(this)
         insertTestData()
-        //setAdapterForListView(myRepo.getAll())
-        var friendsLst: List<BEFriend> = myRepo.getAll()
-        lst_friends.adapter = FriendAdapter(this, myRepo.getAll().toTypedArray())
-        lst_friends.setOnItemClickListener { parent, view, position, id -> onListItemClick(parent as ListView, view, position, id) }
-        //floatingActionButton.setOnClickListener{v -> onClickAdd()}
+        updatedList = myRepo.getAll().toMutableList()
+        lst_friends.adapter = FriendAdapter(this, updatedList.toTypedArray())
+        lst_friends.setOnItemClickListener { parent, view, position, id -> onListItemClick(parent as ListView, view, position) }
     }
 
     private fun insertTestData() {
-        myRepo.insert(BEFriend(0, "a", "b", 1.1, 1.1, "c", "d", "e", "f", false, null))
-        myRepo.insert(BEFriend(0, "h", "a", 1.1, 1.1, "w", "f", "m", "a", false, null))
-        myRepo.insert(BEFriend(0, "a", "l", 1.1, 1.1, "r", "i", "d", "s", false, null))
+        myRepo.insert(BEFriend(0, "Spiderman", "b", 1.1, 1.1, "c", "d", "e", "f", false, null))
+        myRepo.insert(BEFriend(0, "Ironman", "a", 1.1, 1.1, "w", "f", "m", "a", false, null))
+        myRepo.insert(BEFriend(0, "Antman", "l", 1.1, 1.1, "r", "i", "d", "s", false, null))
     }
-
-    var cache: List<BEFriend> = ArrayList<BEFriend>()
-
-    /*  private fun setAdapterForListView(friends: List<BEFriend>) {
-        Log.d(TAG, "Listview initialized")
-        val asStrings = friends.map { f -> "${f.id}, ${f.name}" }
-        val adapter: ListAdapter = ArrayAdapter(
-                this,
-                android.R.layout.simple_list_item_1,
-                asStrings.toTypedArray()
-        )
-        lst_friends.adapter = adapter
-        lst_friends.onItemClickListener = AdapterView.OnItemClickListener { _, _, pos, _ -> onClickFriend(pos) }
-    } */
-
-    /*  private fun onClickFriend(pos: Int) {
-        val friend = cache[pos]
-        Toast.makeText(this, "${friend}", Toast.LENGTH_SHORT).show()
-    } */
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         //Inflate the menu. Add items to the action bar if it is present
@@ -75,31 +52,17 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this, DetailsActivity::class.java)
                 intent.putExtra("isCreation", true)
                 startActivityForResult(intent, REQUEST_CODE)
-                onClickInsert()
             }
         }
         return super.onOptionsItemSelected(item)
     }
 
-    fun onClickInsert() {
-       // myRepo.insert(BEFriend(0, field_name.text.toString(), " ", 0.0, 0.0, " ", " ", " ", " ", true, null))
-        //setAdapterForListView(myRepo.getAll())
-    }
-
-/*    private fun onClickAdd() {
-        val intent = Intent(this,DetailsActivity::class.java)
-        intent.putExtra("isCreation", true)
-        startActivityForResult(intent, REQUEST_CODE)
-    }
-*/
-
-    fun onListItemClick(parent: ListView?, v: View?, position: Int, id: Long) {
+    fun onListItemClick(parent: ListView?, v: View?, position: Int) {
         // position is in the list!
         // first get the name of the person clicked
-        val friendForDetails = myRepo.getById(id.toInt()) as Serializable
+        val friendForDetails = updatedList[position]
         val intent = Intent(this, DetailsActivity::class.java)
         intent.putExtra("friendForDetails", friendForDetails)
-        intent.putExtra("positionOfFriend", position)
         intent.putExtra("isCreation", false)
         startActivityForResult(intent, REQUEST_CODE)
     }
@@ -131,46 +94,39 @@ class MainActivity : AppCompatActivity() {
             return resView
         }
     }
-}
-/*
+
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE) {
-            var friendPosition: Int?
-            var updatedFriend: BEFriend?
-            var newFriend: BEFriend?
-            if (resultCode == RESULT_OK) {
-                if (data?.extras?.getBoolean("isCreation") == false) {
-                    friendPosition = data?.extras?.getInt("positionOfFriend")
-                    updatedFriend = data?.extras?.getSerializable("editedFriend") as BEFriend
-                    if (friendPosition != null) {
-                        updateData(friendPosition, updatedFriend)
-                        lst_friends.adapter = setAdapterForListView(myRepo.getAll())
-                    }
-                } else {
-                    newFriend = data?.extras?.getSerializable("newFriend") as BEFriend
-                    var updatedList = friendsLst.toMutableList()
-                    updatedList.add(newFriend)
-                    friendsLst = updatedList.toTypedArray()
-                    lst_friends.adapter = FriendAdapter(this, friendsLst)
+            var friendId: Int?
+            var updatedFriend: BEFriend
+            var newFriend: BEFriend
+            if (resultCode == RESULT_UPDATE) {
+                updatedFriend = data?.extras?.getSerializable("editedFriend") as BEFriend
+                if (updatedFriend != null) {
+                    myRepo.update(updatedFriend)
+                    updatedList = myRepo.getAll().toMutableList()
+                    lst_friends.adapter = FriendAdapter(this, updatedList.toTypedArray())
                 }
             }
-            if (resultCode == RESULT_FIRST_USER) {
-                friendPosition = data?.extras?.getInt("positionOfFriend")
-                if (friendPosition != null) {
-                    var updatedList = friendsLst.toMutableList()
-                    updatedList.removeAt(friendPosition)
-                    friendsLst = updatedList.toTypedArray()
-                    lst_friends.adapter = FriendAdapter(this, friendsLst)
+            if (resultCode == RESULT_CREATE) {
+                newFriend= data?.extras?.getSerializable("newFriend") as BEFriend
+                myRepo.insert(newFriend)
+                updatedList = myRepo.getAll().toMutableList()
+                lst_friends.adapter = FriendAdapter(this, updatedList.toTypedArray())
+            }
+            if (resultCode == RESULT_DELETE) {
+                friendId = data?.extras?.getInt("idOfFriend")
+                if (friendId!! >= 0) {
+                    myRepo.delete(friendId)
+                    updatedList = myRepo.getAll().toMutableList()
+                    lst_friends.adapter = FriendAdapter(this, updatedList.toTypedArray())
                 }
             }
             if (resultCode == RESULT_CANCELED) {
-
+                Toast.makeText(this, "Cancelling...", Toast.LENGTH_SHORT).show()
             }
         }
     }
-
-    private fun updateData(friendPosition: Int, updatedFriend: BEFriend) {
-        //friendsLst[friendPosition] = updatedFriend
-    }
- */
+}
