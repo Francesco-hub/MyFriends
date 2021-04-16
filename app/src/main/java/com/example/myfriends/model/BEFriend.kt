@@ -15,7 +15,5 @@ class BEFriend(
         var website: String,
         var birthday: String,
         var isFavorite: Boolean,
-        var picture: File?) : Serializable{
-
-}
+        var picture: File?) : Serializable
 
