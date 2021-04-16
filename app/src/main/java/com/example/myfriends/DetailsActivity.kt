@@ -55,11 +55,9 @@ class DetailsActivity : AppCompatActivity() {
         startListening()
         startListening()
         if (!isCreation) { //Depending if we are creating a friend or not, we adapt the GUI.
+            friendPicture.setImageResource(R.drawable.user_image)
             friendToEdit = extras.getSerializable("friendForDetails") as BEFriend
-            if (friendToEdit.picture != null) {
-                friendPicture.setImageDrawable(Drawable.createFromPath(friendToEdit.picture?.absolutePath))
-            }
-            else friendPicture.setImageResource(R.drawable.user_image)
+            if (friendToEdit.picture != null) friendPicture.setImageDrawable(Drawable.createFromPath(friendToEdit.picture?.absolutePath))
             //Set the information in the Fields to the information of the previous friend
             sw_Favourite.isChecked = friendToEdit.isFavorite
             field_name.setText(friendToEdit.name)
@@ -71,6 +69,7 @@ class DetailsActivity : AppCompatActivity() {
             btn_delete.setOnClickListener { v -> onClickDelete() }
             btn_save.setOnClickListener { v -> onClickSave() }
         } else {
+            friendPicture.setImageResource(R.drawable.user_image)
             //Set the fields and button functionality to be ready for friend creation
             friendToEdit = BEFriend(1, "", "", 0.0, 0.0, "", "", "", "", false, null)
             textView.text = "Add Friend"
