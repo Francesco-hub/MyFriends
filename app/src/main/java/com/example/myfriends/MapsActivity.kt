@@ -13,10 +13,10 @@ import com.google.android.gms.maps.model.MarkerOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
-   private val TAG = "xyz"
+    private val TAG = "xyz"
 
-    lateinit var friendLocation : LatLng
-    lateinit var currentLocation : LatLng
+    lateinit var friendLocation: LatLng
+    lateinit var currentLocation: LatLng
 
     private lateinit var mMap: GoogleMap
     private var friendName: String? = ""
@@ -24,9 +24,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
-        var extras:Bundle = intent.extras!!
-        friendLocation = LatLng(extras.getDouble("homeLocationLat"),extras.getDouble("homeLocationLon"))
-        currentLocation = LatLng(extras.getDouble("currentLocationLat"),extras.getDouble("currentLocationLon"))
+        var extras: Bundle = intent.extras!!
+        friendLocation = LatLng(extras.getDouble("homeLocationLat"), extras.getDouble("homeLocationLon"))
+        currentLocation = LatLng(extras.getDouble("currentLocationLat"), extras.getDouble("currentLocationLon"))
         friendName = extras.getString("friendName")
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -43,6 +43,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
@@ -63,16 +64,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val viewPoint = CameraUpdateFactory.newLatLngZoom(friendLocation, 13F)
         mMap.animateCamera(viewPoint)
 
-       // setupZoomLevels()
-    }
-
-    fun onClickEASV(view: View) {
-       // val level: Int = spinnerZoomLevel.getSelectedItem().toString().toInt()
-
-        // zoomlevel 0..21, where 0 is the world and 21 is single street
-        // zoomlevel 0..21, where 0 is the world and 21 is single street
-       // Log.d(TAG, "Will zoom to easv to level $level")
-
+        // setupZoomLevels()
     }
 
     /*private fun setupZoomLevels() {

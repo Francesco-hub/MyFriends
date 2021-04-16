@@ -247,14 +247,13 @@ class DetailsActivity : AppCompatActivity() {
                 override fun onLocationChanged(location: Location) {
                     //  count++
                     Log.d(TAG, "Location changed")
-                        if(locationChanged){
-                    friendToEdit.locationLat = location.latitude
-                    friendToEdit.locationLon = location.longitude
-                        }
-                    else{
-                            currentLocationLat = location.latitude
-                            currentLocationLon= location.longitude
-                        }
+                    if (locationChanged) {
+                        friendToEdit.locationLat = location.latitude
+                        friendToEdit.locationLon = location.longitude
+                    } else {
+                        currentLocationLat = location.latitude
+                        currentLocationLon = location.longitude
+                    }
 
                 }
 
