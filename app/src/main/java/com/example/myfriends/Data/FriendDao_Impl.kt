@@ -7,8 +7,9 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import android.widget.Toast
 import com.example.myfriends.model.BEFriend
+import java.io.File
+import java.io.FileOutputStream
 
 class FriendDao_Impl(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION), IFriendDao {
@@ -20,7 +21,7 @@ class FriendDao_Impl(context: Context) :
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL("CREATE TABLE $DATABASE_NAME (id INTEGER PRIMARY KEY, name TEXT, address TEXT, locationLat DOUBLE, locationLon DOUBLE, phone TEXT, mail TEXT, website TEXT, birthday TEXT, isFavourite BIT, picture TEXT)")
+        db?.execSQL("CREATE TABLE $DATABASE_NAME (id INTEGER PRIMARY KEY, name TEXT, address TEXT, locationLat DOUBLE, locationLon DOUBLE, phone TEXT, mail TEXT, website TEXT, birthday TEXT, isFavourite BIT, picture String)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -72,13 +73,12 @@ class FriendDao_Impl(context: Context) :
                     address = address,
                     locationLat = locationLat,
                     locationLon = locationLon,
-                    phone =
-                    phone,
+                    phone = phone,
                     mail = mail,
                     website = web,
                     birthday = birthday,
                     isFavorite = isFavourite,
-                    picture = null
+                    picture = File(picture)
                 )
                 friendList.add(friend)
             } while (cursor.moveToNext())
@@ -111,7 +111,7 @@ class FriendDao_Impl(context: Context) :
         cv.put("website", f.website)
         cv.put("birthday", f.birthday)
         cv.put("isFavourite", f.isFavorite)
-        cv.put("picture", "aaa")
+        cv.put("picture", f.picture.toString())
         val result = myDatabase.insert("$DATABASE_NAME", null, cv)
         if (result > 0.toLong()) {
             f.id = result.toInt()
@@ -130,7 +130,7 @@ class FriendDao_Impl(context: Context) :
         cv.put("website", f.website)
         cv.put("birthday", f.birthday)
         cv.put("isFavourite", f.isFavorite)
-        cv.put("picture", "aaa")
+        cv.put("picture", f.picture.toString())
         val whereClause = "id=?"
         val whereArgs = arrayOf((f.id).toString())
         myDatabase.update("$DATABASE_NAME", cv, whereClause, whereArgs)
