@@ -90,7 +90,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun onClickBrowse() {
-        var url = "http://www.easv.dk/"
+        var url = friendToEdit.website
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         startActivity(intent)
@@ -99,7 +99,7 @@ class DetailsActivity : AppCompatActivity() {
     private fun onClickEmail() {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "plain/text"
-        val receivers = arrayOf("roci0055@easv365.dk")
+        val receivers = arrayOf(friendToEdit.mail)
         intent.putExtra(Intent.EXTRA_EMAIL, receivers)
         intent.putExtra(Intent.EXTRA_TEXT, "Hello, this is the signature of the email")
         startActivity(intent)
@@ -172,13 +172,13 @@ class DetailsActivity : AppCompatActivity() {
 
     fun onClickCall() {
         val intent = Intent(Intent.ACTION_DIAL)
-        intent.data = Uri.parse("tel: $" + "123456798")
+        intent.data = Uri.parse("tel: ${friendToEdit.phone}")
         startActivity(intent)
     }
 
     private fun onClickSms() {
         val sendIntent = Intent(Intent.ACTION_VIEW)
-        sendIntent.data = Uri.parse("sms: 1444")
+        sendIntent.data = Uri.parse("sms: ${friendToEdit.phone}")
         sendIntent.putExtra("sms_body", "Hi, this is an sms")
         startActivity(sendIntent)
     }
@@ -240,14 +240,12 @@ class DetailsActivity : AppCompatActivity() {
         if (!isPermissionGiven()) return
         if (myLocationListener == null)
             myLocationListener = object : LocationListener {
-                //var count: Int = 0
 
                 override fun onLocationChanged(location: Location) {
-                    //  count++
-                    Log.d(TAG, "Location changed")
                     if (locationChanged) {
                         friendToEdit.locationLat = location.latitude
                         friendToEdit.locationLon = location.longitude
+                        Log.d(TAG, "hola")
                     } else {
                         currentLocationLat = location.latitude
                         currentLocationLon = location.longitude

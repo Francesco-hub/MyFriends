@@ -35,9 +35,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun insertTestData() {
-        myRepo.insert(BEFriend(0, "Spiderman", "b", 1.1, 1.1, "c", "d", "e", "f", false, null))
-        myRepo.insert(BEFriend(0, "Ironman", "a", 1.1, 1.1, "w", "f", "m", "a", false, null))
-        myRepo.insert(BEFriend(0, "Antman", "l", 1.1, 1.1, "r", "i", "d", "s", false, null))
+        myRepo.insert(BEFriend(0, "Spiderman", "New York",  40.6643,  -73.9385, "123456", "spider@man", "spiderman.com", "28/12/1965", true, null))
+        myRepo.insert(BEFriend(0, "Ironman", "Kansas",  39.1225, -94.7418, "456789", "iron@man", "ironman.dk", "29/05/1970", false, null))
+        myRepo.insert(BEFriend(0, "Antman", "California", 37.25022, -119.75126, "123798", "ant@man", "antman.net", "15/08/2001", false, null))
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
