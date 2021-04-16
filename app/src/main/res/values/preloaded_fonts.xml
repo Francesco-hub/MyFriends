@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/aclonica</item>
+        <item>@font/andika</item>
+        <item>@font/annie_use_your_telescope</item>
+        <item>@font/carrois_gothic_sc</item>
+        <item>@font/cutive</item>
+        <item>@font/rock_salt</item>
+    </array>
+</resources>

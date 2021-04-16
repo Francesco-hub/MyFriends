@@ -13,4 +13,14 @@
     <string name="todo">TODO</string>
     <string name="address" />
     <string name="title_activity_maps">Map</string>
+    <string name="birthday">Birthday</string>
+    <string name="mail">Mail</string>
+    <string name="web">Web</string>
+    <string name="peter_parker">Peter Parker</string>
+    <string name="st_example_26">St. Example 26</string>
+    <string name="_22_05_1997">22/05/1997</string>
+    <string name="_123456789">123456789</string>
+    <string name="example_gmail_com">example@gmail.com</string>
+    <string name="www_example_com">www.example.com</string>
+    <string name="todo">TODO</string>
 </resources>

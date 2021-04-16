@@ -7,6 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="sea_green">#0A8794</color>
+    <color name="mint_green">#B0FF92</color>
+    <color name="purple">#5F00BA</color>
     <color name="phoneColor" />
 </resources>
