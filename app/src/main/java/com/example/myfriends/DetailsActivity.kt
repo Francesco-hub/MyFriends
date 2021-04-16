@@ -16,6 +16,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.myfriends.Data.FriendDao_Impl
 import com.example.myfriends.model.BEFriend
 import com.google.android.gms.maps.model.LatLng
 import kotlinx.android.synthetic.main.activity_details.*
@@ -26,12 +27,16 @@ class DetailsActivity : AppCompatActivity() {
 
     private var TAG = "xyz"
     private val REQUEST_CODE = 1
-    lateinit var friendToEdit: BEFriend
-    var positionOfFriend: Int = 1
-    var isCreation: Boolean = false
-    var locationChanged: Boolean = false
-    var currentLocationLat: Double = 0.0
-    var currentLocationLon: Double = 0.0
+    private val RESULT_CREATE = 2
+    private val RESULT_UPDATE = 3
+    private val RESULT_DELETE = 4
+
+    private lateinit var friendToEdit: BEFriend
+    private var isCreation: Boolean = false
+    private var locationChanged: Boolean = false
+    private var currentLocationLat: Double = 0.0
+    private var currentLocationLon: Double = 0.0
+    private var myLocationListener: LocationListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +59,6 @@ class DetailsActivity : AppCompatActivity() {
             if (friendToEdit.picture != null) {
                 friendPicture.setImageDrawable(Drawable.createFromPath(friendToEdit.picture?.absolutePath))
             }
-            positionOfFriend = extras.getInt("positionOfFriend")
             sw_Favourite.isChecked = friendToEdit.isFavorite
             field_name.setText(friendToEdit.name)
             field_phone.setText(friendToEdit.phone)
@@ -72,7 +76,7 @@ class DetailsActivity : AppCompatActivity() {
             btn_delete.setOnClickListener { v -> onClickCancel() }
             btn_save.setOnClickListener { v -> onClickCreate() }
         }
-
+        Toast.makeText(this, "id = ${friendToEdit.id}", Toast.LENGTH_LONG).show()
     }
 
     private fun onClickMap() {
@@ -86,7 +90,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun onClickBrowse() {
-        var url = "http://www.easv.dk/"
+        var url = friendToEdit.website
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         startActivity(intent)
@@ -95,9 +99,8 @@ class DetailsActivity : AppCompatActivity() {
     private fun onClickEmail() {
         val intent = Intent(Intent.ACTION_SEND)
         intent.type = "plain/text"
-        val receivers = arrayOf("roci0055@easv365.dk")
+        val receivers = arrayOf(friendToEdit.mail)
         intent.putExtra(Intent.EXTRA_EMAIL, receivers)
-        //intent.putExtra(Intent.EXTRA_SUBJECT, "Test")
         intent.putExtra(Intent.EXTRA_TEXT, "Hello, this is the signature of the email")
         startActivity(intent)
     }
@@ -117,9 +120,8 @@ class DetailsActivity : AppCompatActivity() {
             friendToEdit.website = field_web.text.toString()
             friendToEdit.birthday = field_birthday.text.toString()
             friendToEdit.isFavorite = sw_Favourite.isChecked
-            intent.putExtra("isCreation", true)
             intent.putExtra("newFriend", friendToEdit)
-            setResult(RESULT_OK, intent)
+            setResult(RESULT_CREATE, intent)
             finish()
         }
     }
@@ -140,10 +142,8 @@ class DetailsActivity : AppCompatActivity() {
             friendToEdit.website = field_web.text.toString()
             friendToEdit.birthday = field_birthday.text.toString()
             friendToEdit.isFavorite = sw_Favourite.isChecked
-            intent.putExtra("isCreation", false)
             intent.putExtra("editedFriend", friendToEdit)
-            intent.putExtra("positionOfFriend", positionOfFriend)
-            setResult(RESULT_OK, intent)
+            setResult(RESULT_UPDATE, intent)
             finish()
         }
     }
@@ -165,20 +165,20 @@ class DetailsActivity : AppCompatActivity() {
 
     private fun onClickDelete() {
         val intent = Intent()
-        intent.putExtra("positionOfFriend", positionOfFriend)
-        setResult(RESULT_FIRST_USER, intent)
+        intent.putExtra("idOfFriend", friendToEdit.id)
+        setResult(RESULT_DELETE, intent)
         finish()
     }
 
     fun onClickCall() {
         val intent = Intent(Intent.ACTION_DIAL)
-        intent.data = Uri.parse("tel: $" + "123456798")
+        intent.data = Uri.parse("tel: ${friendToEdit.phone}")
         startActivity(intent)
     }
 
     private fun onClickSms() {
         val sendIntent = Intent(Intent.ACTION_VIEW)
-        sendIntent.data = Uri.parse("sms: 1444")
+        sendIntent.data = Uri.parse("sms: ${friendToEdit.phone}")
         sendIntent.putExtra("sms_body", "Hi, this is an sms")
         startActivity(sendIntent)
     }
@@ -229,8 +229,6 @@ class DetailsActivity : AppCompatActivity() {
         else Toast.makeText(this, "Location is null", Toast.LENGTH_SHORT).show()
     }
 
-    var myLocationListener: LocationListener? = null
-
     fun onClickHome() {
         requestPermissions()
         locationChanged = true
@@ -242,20 +240,16 @@ class DetailsActivity : AppCompatActivity() {
         if (!isPermissionGiven()) return
         if (myLocationListener == null)
             myLocationListener = object : LocationListener {
-                //var count: Int = 0
 
                 override fun onLocationChanged(location: Location) {
-                    //  count++
-                    Log.d(TAG, "Location changed")
-                        if(locationChanged){
-                    friendToEdit.locationLat = location.latitude
-                    friendToEdit.locationLon = location.longitude
-                        }
-                    else{
-                            currentLocationLat = location.latitude
-                            currentLocationLon= location.longitude
-                        }
-
+                    if (locationChanged) {
+                        friendToEdit.locationLat = location.latitude
+                        friendToEdit.locationLon = location.longitude
+                        Log.d(TAG, "hola")
+                    } else {
+                        currentLocationLat = location.latitude
+                        currentLocationLon = location.longitude
+                    }
                 }
 
                 override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
