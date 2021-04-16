@@ -2,7 +2,7 @@ package com.example.myfriends.Data
 
 import com.example.myfriends.model.BEFriend
 
-interface IFriendDao {
+interface IFriendDao { //Interface for Db. All methods are implemented in FriendDao_Impl.kt
 
     fun getAll(): List<BEFriend>
 

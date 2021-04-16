@@ -13,23 +13,23 @@ import java.io.FileOutputStream
 
 class FriendDao_Impl(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION), IFriendDao {
-    private val TAG: String = "xyz"
+    private val TAG: String = "xyz" 
 
     companion object {
         private val DATABASE_VERSION = 1
         private val DATABASE_NAME = "Friend"
     }
 
-    override fun onCreate(db: SQLiteDatabase?) {
+    override fun onCreate(db: SQLiteDatabase?) { //Creates the Friend table on runtime with the relevant table columns
         db?.execSQL("CREATE TABLE $DATABASE_NAME (id INTEGER PRIMARY KEY, name TEXT, address TEXT, locationLat DOUBLE, locationLon DOUBLE, phone TEXT, mail TEXT, website TEXT, birthday TEXT, isFavourite BIT, picture String)")
     }
 
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) { //drops the Friend table in case the Db version is updated
         db!!.execSQL("DROP TABLE IF EXISTS " + "friend")
         onCreate(db)
     }
 
-    override fun getAll(): List<BEFriend> {
+    override fun getAll(): List<BEFriend> { //Returns all of the friends stored in Db as List of BEFriend
         val friendList: ArrayList<BEFriend> = ArrayList()
         val selectQuery = "SELECT  * FROM $DATABASE_NAME ORDER BY id"
         val db = this.readableDatabase
@@ -86,20 +86,7 @@ class FriendDao_Impl(context: Context) :
         return friendList
     }
 
-
-    /*private fun getByCursor(cursor: Cursor): List<BEFriend> {
-        val myDatabase = this.writableDatabase
-        val result = ArrayList<BEFriend>()
-        if (cursor.moveToFirst()) {
-            do {
-                val id = cursor.getString(cursor.getColumnIndex("id"))
-                val name = cursor.getString(cursor.getColumnIndex("name"))
-            } while (cursor.moveToNext())
-        }
-        return result
-    } */
-
-    override fun insert(f: BEFriend) {
+    override fun insert(f: BEFriend) { //Inserts a new friend in Db
         val myDatabase = this.writableDatabase
         val cv = ContentValues()
         cv.put("name", f.name)
@@ -118,7 +105,7 @@ class FriendDao_Impl(context: Context) :
         } else Log.d(TAG, "Create friend: FAILED")
     }
 
-    override fun update(f: BEFriend) {
+    override fun update(f: BEFriend) { //Updates the information of an existing friend in Db
         val myDatabase = this.writableDatabase
         val cv = ContentValues()
         cv.put("name", f.name)
@@ -136,7 +123,7 @@ class FriendDao_Impl(context: Context) :
         myDatabase.update("$DATABASE_NAME", cv, whereClause, whereArgs)
     }
 
-    override fun delete(id: Int) {
+    override fun delete(id: Int) { //Deletes a friend in Db by its Id
         val myDatabase = this.writableDatabase
         val whereClause = "id=?"
         val whereArgs = arrayOf((id).toString())
