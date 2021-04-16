@@ -57,7 +57,8 @@ class DetailsActivity : AppCompatActivity() {
         if (!isCreation) { //Depending if we are creating a friend or not, we adapt the GUI.
             friendPicture.setImageResource(R.drawable.user_image)
             friendToEdit = extras.getSerializable("friendForDetails") as BEFriend
-            if (friendToEdit.picture != null) friendPicture.setImageDrawable(Drawable.createFromPath(friendToEdit.picture?.absolutePath))
+            if (friendToEdit.picture.toString() != "null") friendPicture.setImageDrawable(Drawable.createFromPath(friendToEdit.picture?.absolutePath))
+            else friendPicture.setImageResource(R.drawable.user_image)
             //Set the information in the Fields to the information of the previous friend
             sw_Favourite.isChecked = friendToEdit.isFavorite
             field_name.setText(friendToEdit.name)
